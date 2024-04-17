@@ -44,7 +44,7 @@ describe('Testes da rota /users', function () {
     });
   });
 
-  describe.only('Testes de criação de usuário', function () {
+  describe('Testes de criação de usuário', function () {
     var idUsuario;
 
     afterEach(function () {
@@ -52,8 +52,8 @@ describe('Testes da rota /users', function () {
     });
 
     it('Deve ser possível criar usuário com dados válidos', function () {
-      const name = 'iury oliveira';
-      const email = 'iuryasgdyas@sdausdhaus.com';
+      const name = faker.person.fullName();
+      const email = faker.internet.email();
       cy.request('POST', '/users', {
         name: name,
         email: email,
