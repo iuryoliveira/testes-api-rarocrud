@@ -23,3 +23,7 @@
 //
 // -- This will overwrite an existing command --
 // Cypress.Commands.overwrite('visit', (originalFn, url, options) => { ... })
+
+Cypress.Commands.add('deletarUsuario', function (id) {
+  cy.request('DELETE', 'users/' + id);
+});
