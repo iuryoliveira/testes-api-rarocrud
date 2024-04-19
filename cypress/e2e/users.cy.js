@@ -159,9 +159,7 @@ describe("Testes da rota /users", function () {
       });
     });
   });
-
-  //Aqui
-  describe.only("Testes relacionados a atualização de usuários", function () {
+  describe("Testes relacionados a atualização de usuários", function () {
     var usuarioCriado;
 
     before(function () {
