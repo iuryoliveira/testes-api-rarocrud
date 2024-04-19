@@ -135,7 +135,7 @@ describe('Testes da rota /users', function () {
 
     it('Deve ser possível consultar um usuário por id', function () {
       cy.request('/users/' + usuarioCriado.id).then((response) => {
-        expect(response.status).to.equal(201);
+        expect(response.status).to.equal(200);
         expect(response.body).to.deep.equal(usuarioCriado);
         expect(response.body.email).to.equal(usuarioCriado.email);
       });
