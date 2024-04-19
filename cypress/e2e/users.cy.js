@@ -378,4 +378,38 @@ describe('Testes da rota /users', function () {
       });
     });
   });
+
+  describe('Testes de remoção de usuário', function () {
+    it('Deve receber um bad request ao tentar remover um usuario usando ID inválido', function () {
+      cy.request({
+        method: METHOD_HTTP.DELETE,
+        url: '/users/1234-abcde',
+        failOnStatusCode: false,
+      }).then((response) => {
+        expect(response.status).to.equal(400);
+        expect(response.body).to.be.empty;
+      });
+    });
+
+    it('Deve ser possível remover um usuário já cadastrado', function () {
+      cy.criarUsuario().then((dadosUsuario) => {
+        cy.request(METHOD_HTTP.DELETE, '/users/' + dadosUsuario.id).then(
+          (response) => {
+            expect(response.status).to.equal(204);
+            expect(response.body).to.be.empty;
+          }
+        );
+      });
+    });
+
+    it('A API não deve retornar erro se o usuário já não existir na base de dados ', function () {
+      cy.request(
+        METHOD_HTTP.DELETE,
+        '/users/a12eaaea-b76b-4756-95c9-241783874252'
+      ).then((response) => {
+        expect(response.status).to.equal(204);
+        expect(response.body).to.be.empty;
+      });
+    });
+  });
 });
