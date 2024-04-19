@@ -1,6 +1,6 @@
 import { da, faker } from "@faker-js/faker";
 const { METHOD_HTTP } = require("../support/method-http.js");
-const user = require('../fixtures/user/responses/usuario.json')
+const user = require("../fixtures/user/responses/usuario.json");
 
 describe("Testes da rota /users", function () {
   describe("Testes de Bad requests", function () {
@@ -186,9 +186,8 @@ describe("Testes da rota /users", function () {
         url: userComId,
         body: bodyRequisicao,
       }).then((response) => {
-
         expect(response.status).to.be.eq(200);
-        expect(response.body).to.have.keys(user)
+        expect(response.body).to.have.keys(user);
         expect(response.body.id).to.be.eq(usuarioCriado.id);
         expect(response.body.name).to.be.eq(bodyRequisicao.name);
         expect(response.body.email).to.be.eq(bodyRequisicao.email);
@@ -200,7 +199,7 @@ describe("Testes da rota /users", function () {
     });
 
     it("Deve retornar not found ao tentar atualizar um usuário que não existe", function () {
-      var userComId = "/users/8e769999-efc4-46e2-b2af-426e160e290c"
+      var userComId = "/users/8e769999-efc4-46e2-b2af-426e160e290c";
       var bodyRequisicao = {
         name: faker.person.fullName(),
         email: faker.internet.email(),
@@ -210,14 +209,14 @@ describe("Testes da rota /users", function () {
         method: METHOD_HTTP.PUT,
         url: userComId,
         body: bodyRequisicao,
-        failOnStatusCode: false
+        failOnStatusCode: false,
       }).then((response) => {
         expect(response.status).to.be.eq(404);
       });
     });
 
     it("Deve retornar bad request ao tentar atualizar um usuário com id inválido", function () {
-      var userComId = "/users/10"
+      var userComId = "/users/10";
       var bodyRequisicao = {
         name: faker.person.fullName(),
         email: faker.internet.email(),
@@ -227,32 +226,138 @@ describe("Testes da rota /users", function () {
         method: METHOD_HTTP.PUT,
         url: userComId,
         body: bodyRequisicao,
-        failOnStatusCode: false
+        failOnStatusCode: false,
       }).then((response) => {
         expect(response.status).to.be.eq(400);
       });
     });
-    it('Deve retornar erro ao atualizar um usuário com um email ja existente', function() {
-        var userComId = "/users/" + usuarioCriado.id;
+    it("Deve retornar erro ao atualizar um usuário com um email ja existente", function () {
+      var userComId = "/users/" + usuarioCriado.id;
+      var mensagemErro = "E-mail already in use.";
 
-        var bodyRequisicao = {
-          name: faker.person.fullName(),
-          email: ' '
-        };
+      var bodyRequisicao = {
+        name: faker.person.fullName(),
+        email: " ",
+      };
 
-        cy.listaTodosUsuarios().then((data) =>{
-          bodyRequisicao.email = data[0].email
-        });
-  
-        cy.request({
-          method: METHOD_HTTP.PUT,
-          url: userComId,
-          body: bodyRequisicao,
-          failOnStatusCode: false
-        }).then((response) => {
-          expect(response.status).to.be.eq(422);
-          expect(response.body.error).to.be.eq("E-mail already in use.")
-        });
-    })
+      cy.listaTodosUsuarios().then((data) => {
+        bodyRequisicao.email = data[0].email;
+      });
+
+      cy.request({
+        method: METHOD_HTTP.PUT,
+        url: userComId,
+        body: bodyRequisicao,
+        failOnStatusCode: false,
+      }).then((response) => {
+        expect(response.status).to.be.eq(422);
+        expect(response.body.error).to.be.eq(mensagemErro);
+      });
+    });
+
+    it("Deve retornar erro tentar atualizar um usuário sem o parâmetro email", function () {
+      var userComId = "/users/" + usuarioCriado.id;
+
+      var bodyRequisicao = {
+        name: faker.person.fullName(),
+      };
+
+      cy.request({
+        method: METHOD_HTTP.PUT,
+        url: userComId,
+        body: bodyRequisicao,
+        failOnStatusCode: false,
+      }).then((response) => {
+        expect(response.status).to.be.eq(400);
+      });
+    });
+
+    it("Deve retornar erro tentar atualizar um usuário sem o parâmetro nome", function () {
+      var userComId = "/users/" + usuarioCriado.id;
+
+      var bodyRequisicao = {
+        email: faker.internet.email(),
+      };
+
+      cy.request({
+        method: METHOD_HTTP.PUT,
+        url: userComId,
+        body: bodyRequisicao,
+        failOnStatusCode: false,
+      }).then((response) => {
+        expect(response.status).to.be.eq(400);
+      });
+    });
+
+    it("Deve retornar erro tentar atualizar um usuário com parâmetro nome com dado null", function () {
+      var userComId = "/users/" + usuarioCriado.id;
+
+      var bodyRequisicao = {
+        name: null,
+        email: faker.internet.email(),
+      };
+
+      cy.request({
+        method: METHOD_HTTP.PUT,
+        url: userComId,
+        body: bodyRequisicao,
+        failOnStatusCode: false,
+      }).then((response) => {
+        expect(response.status).to.be.eq(400);
+      });
+    });
+    it("Deve retornar erro tentar atualizar um usuário com parâmetro email com dado null", function () {
+      var userComId = "/users/" + usuarioCriado.id;
+
+      var bodyRequisicao = {
+        name: faker.person.fullName(),
+        email: null,
+      };
+
+      cy.request({
+        method: METHOD_HTTP.PUT,
+        url: userComId,
+        body: bodyRequisicao,
+        failOnStatusCode: false,
+      }).then((response) => {
+        expect(response.status).to.be.eq(400);
+      });
+    });
+
+    it("Deve retornar erro tentar atualizar um usuário com parâmetro nome com string vazia", function () {
+      var userComId = "/users/" + usuarioCriado.id;
+
+      var bodyRequisicao = {
+        name: "",
+        email: faker.internet.email(),
+      };
+
+      cy.request({
+        method: METHOD_HTTP.PUT,
+        url: userComId,
+        body: bodyRequisicao,
+        failOnStatusCode: false,
+      }).then((response) => {
+        expect(response.status).to.be.eq(400);
+      });
+    });
+
+    it("Deve retornar erro tentar atualizar um usuário com parâmetro email com string vazia", function () {
+      var userComId = "/users/" + usuarioCriado.id;
+
+      var bodyRequisicao = {
+        name: faker.person.fullName(),
+        email: "",
+      };
+
+      cy.request({
+        method: METHOD_HTTP.PUT,
+        url: userComId,
+        body: bodyRequisicao,
+        failOnStatusCode: false,
+      }).then((response) => {
+        expect(response.status).to.be.eq(400);
+      });
+    });
   });
 });
